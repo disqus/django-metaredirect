@@ -1,0 +1,1 @@
+{% load escaping %}<noscript><META http-equiv="refresh" content="0;URL={{ url }}"></noscript><script>location.replace("{{ url|escapejs|escapeforwardslashes }}")</script>
