@@ -24,6 +24,8 @@ setup(name='django-metaredirect',
     url='http://github.com/disqus/django-metaredirect/',
     author='ted kaemming',
     author_email='ted@disqus.com',
+    description='META-tag and JavaScript based generic redirect views for '
+        'maintaining HTTP referrers.',
     packages=find_packages(),
     include_package_data=True,
     install_requires=install_requires,
