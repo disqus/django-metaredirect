@@ -1,5 +1,6 @@
 import mock
 from django.http import HttpRequest
+from django.template import Context, Template
 from django.test import TestCase
 
 from metaredirect.helpers import is_interactive_user_agent
@@ -73,3 +74,12 @@ class RedirectToViewTestCase(TestCase):
 
         javascript_redirect = r'<script>location.replace("http:\/\/example.com\/\u0022)\u003C\/script\u003E")</script>'
         self.assertContains(response, javascript_redirect)
+
+
+class EscapeForwardSlashesTestCase(TestCase):
+    template = Template('{% load escaping %}{{ value|escapeforwardslashes }}')
+
+    def test_escapes_slashes(self):
+        self.assertEqual(self.template.render(Context({
+            'value': 'foo/bar',
+        })), 'foo\/bar')
