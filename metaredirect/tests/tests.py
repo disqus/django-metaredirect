@@ -9,11 +9,14 @@ from metaredirect.views import redirect_to
 
 class InteractiveUserAgentTestCase(TestCase):
     INTERACTIVE_USER_AGENTS = (
-        'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-GB; rv:1.9.0.10) Gecko/2009042315 Firefox/3.0.10',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_6) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.3 Safari/534.24,gzip(gfe)',
+        'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-GB; rv:1.9.0.10) '
+            'Gecko/2009042315 Firefox/3.0.10',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_6) AppleWebKit/534.24 '
+            '(KHTML, like Gecko) Chrome/11.0.696.3 Safari/534.24,gzip(gfe)',
     )
     NONINTERACTIVE_USER_AGENTS = (
-        'curl/7.21.4 (universal-apple-darwin11.0) libcurl/7.21.4 OpenSSL/0.9.8r zlib/1.2.5',
+        'curl/7.21.4 (universal-apple-darwin11.0) libcurl/7.21.4 '
+            'OpenSSL/0.9.8r zlib/1.2.5',
     )
 
     def get_request_for_user_agent(self, agent):
@@ -39,40 +42,46 @@ class InteractiveUserAgentTestCase(TestCase):
 
 
 class RedirectToViewTestCase(TestCase):
+    user_agent_callable = 'metaredirect.views.is_interactive_user_agent'
+
     def get_response(self, url='http://example.com', *args, **kwargs):
         request = mock.Mock(spec=HttpRequest)
         return redirect_to(request, url, *args, **kwargs)
 
-    @mock.patch('metaredirect.views.is_interactive_user_agent', return_value=True)
+    @mock.patch(user_agent_callable, return_value=True)
     def test_200_redirect_for_interactive_agent(self, *args):
         response = self.get_response()
         self.assertEqual(response.status_code, 200)
 
-        meta_redirect = '<META http-equiv="refresh" content="0;URL=http://example.com">'
+        meta_redirect = \
+            '<META http-equiv="refresh" content="0;URL=http://example.com">'
         self.assertContains(response, meta_redirect)
 
-        javascript_redirect = '<script>location.replace("http:\/\/example.com")</script>'
+        javascript_redirect = \
+            '<script>location.replace("http:\/\/example.com")</script>'
         self.assertContains(response, javascript_redirect)
 
-    @mock.patch('metaredirect.views.is_interactive_user_agent', return_value=False)
+    @mock.patch(user_agent_callable, return_value=False)
     def test_302_redirect_for_noninteractive_agent(self, *args):
         response = self.get_response()
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch('metaredirect.views.is_interactive_user_agent', return_value=False)
+    @mock.patch(user_agent_callable, return_value=False)
     def test_301_redirect_for_noninteractive_agent(self, *args):
         response = self.get_response(permanent=True)
         self.assertEqual(response.status_code, 301)
 
-    @mock.patch('metaredirect.views.is_interactive_user_agent', return_value=True)
+    @mock.patch(user_agent_callable, return_value=True)
     def test_200_redirect_escaping(self, *args):
         response = self.get_response(url='http://example.com/")</script>')
         self.assertEqual(response.status_code, 200)
 
-        meta_redirect = '<META http-equiv="refresh" content="0;URL=http://example.com/&quot;)&lt;/script&gt;">'
+        meta_redirect = '<META http-equiv="refresh" ' \
+            'content="0;URL=http://example.com/&quot;)&lt;/script&gt;">'
         self.assertContains(response, meta_redirect)
 
-        javascript_redirect = r'<script>location.replace("http:\/\/example.com\/\u0022)\u003C\/script\u003E")</script>'
+        javascript_redirect = r'<script>location.replace' \
+            '("http:\/\/example.com\/\u0022)\u003C\/script\u003E")</script>'
         self.assertContains(response, javascript_redirect)
 
 

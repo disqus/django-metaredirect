@@ -11,7 +11,7 @@ def escapeforwardslashes(value):
     ``foo\/bar`` after the filter is applied.
 
     Useful for escaping slashes in URLs that will be used in an HTML <script>
-    tag: http://stackoverflow.com/questions/1580647/json-why-are-forward-slashes-escaped
+    tag: http://stackoverflow.com/questions/1580647/
 
     This is possibly unnecessary when paired with the ``escapejs`` filter, but
     better safe then sorry.
