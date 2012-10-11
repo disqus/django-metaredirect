@@ -1,5 +1,5 @@
-django-meta-redirect
-====================
+django-metaredirect
+===================
 
 A simple pluggable Django application that allows maintaining internal HTTP
 referrers for external links by using META-tag or JavaScript based redirects for
