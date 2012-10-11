@@ -13,3 +13,15 @@ Installation
 #. Instead of using ``django.views.generic.simple.redirect_to`` or plain
    ``HttpResponseRedirect``/``HttpResponsePermanentRedirect`` response classes for
    view responses, use ``metaredirect.views.redirect_to``.
+
+Testing
+-------
+
+``make test`` and ``make test-matrix``
+
+Testing in Your Application
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To ensure a HTTP 200 redirect is the response for a given request, check the
+presence and value of the ``X-Location`` header in the response for a browser
+user-agent.
