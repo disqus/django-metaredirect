@@ -50,8 +50,10 @@ class RedirectToViewTestCase(TestCase):
 
     @mock.patch(user_agent_callable, return_value=True)
     def test_200_redirect_for_interactive_agent(self, *args):
-        response = self.get_response()
+        url = 'http://example.com'
+        response = self.get_response(url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['X-Location'], url)
 
         meta_redirect = \
             '<META http-equiv="refresh" content="0;URL=http://example.com">'

@@ -24,8 +24,10 @@ def redirect_to(request, url, permanent=False):
     """
     if is_interactive_user_agent(request):
         context = RequestContext(request, {'url': url})
-        return render_to_response('metaredirect/redirect.txt',
+        response = render_to_response('metaredirect/redirect.txt',
             context_instance=context)
+        response['X-Location'] = url
+        return response
     else:
         if permanent:
             response_cls = HttpResponsePermanentRedirect
