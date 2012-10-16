@@ -17,6 +17,8 @@ class InteractiveUserAgentTestCase(TestCase):
     NONINTERACTIVE_USER_AGENTS = (
         'curl/7.21.4 (universal-apple-darwin11.0) libcurl/7.21.4 '
             'OpenSSL/0.9.8r zlib/1.2.5',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) '
+            'AppleWebKit/534.46 (KHTML, like Gecko) Mobil',  # parses incorrectly
     )
 
     def get_request_for_user_agent(self, agent):
