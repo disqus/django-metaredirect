@@ -15,6 +15,6 @@ test-matrix: clean
 publish: lint test-matrix
 	git tag $$(python setup.py --version)
 	git push --tags
-	python setup.py sdist upload -r disqus
+	python setup.py sdist upload
 
 .PHONY: clean lint test test-matrix publish
