@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import mock
 from django.http import HttpRequest
 from django.template import Context, Template
@@ -43,15 +44,19 @@ class InteractiveUserAgentTestCase(TestCase):
         self.assertFalse(is_interactive_user_agent(request))
 
 
+def using_interactive_user_agent(value):
+    stub = mock.Mock(return_value=value)
+    return mock.patch('metaredirect.views.is_interactive_user_agent', stub)
+
+
 class RedirectToViewTestCase(TestCase):
-    user_agent_callable = 'metaredirect.views.is_interactive_user_agent'
 
     def get_response(self, url='http://example.com', *args, **kwargs):
         request = mock.Mock(spec=HttpRequest)
         return redirect_to(request, url, *args, **kwargs)
 
-    @mock.patch(user_agent_callable, return_value=True)
-    def test_200_redirect_for_interactive_agent(self, *args):
+    @using_interactive_user_agent(True)
+    def test_200_redirect_for_interactive_agent(self):
         url = 'http://example.com'
         response = self.get_response(url)
         self.assertEqual(response.status_code, 200)
@@ -65,18 +70,18 @@ class RedirectToViewTestCase(TestCase):
             '<script>location.replace("http:\/\/example.com")</script>'
         self.assertContains(response, javascript_redirect)
 
-    @mock.patch(user_agent_callable, return_value=False)
-    def test_302_redirect_for_noninteractive_agent(self, *args):
+    @using_interactive_user_agent(False)
+    def test_302_redirect_for_noninteractive_agent(self):
         response = self.get_response()
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch(user_agent_callable, return_value=False)
-    def test_301_redirect_for_noninteractive_agent(self, *args):
+    @using_interactive_user_agent(False)
+    def test_301_redirect_for_noninteractive_agent(self):
         response = self.get_response(permanent=True)
         self.assertEqual(response.status_code, 301)
 
-    @mock.patch(user_agent_callable, return_value=True)
-    def test_200_redirect_escaping(self, *args):
+    @using_interactive_user_agent(True)
+    def test_200_redirect_escaping(self):
         response = self.get_response(url='http://example.com/")</script>')
         self.assertEqual(response.status_code, 200)
 
@@ -87,6 +92,16 @@ class RedirectToViewTestCase(TestCase):
         javascript_redirect = r'<script>location.replace' \
             '("http:\/\/example.com\/\u0022)\u003C\/script\u003E")</script>'
         self.assertContains(response, javascript_redirect)
+
+    @using_interactive_user_agent(True)
+    def test_encodes_utf8_url(self):
+        location = u'http://disqus.com/☃'
+        try:
+            response = self.get_response(location)
+        except UnicodeEncodeError:
+            self.fail('Should encode UTF-8 locations')
+
+        self.assertEqual(response['X-Location'], 'http://disqus.com/%E2%98%83')
 
 
 class EscapeForwardSlashesTestCase(TestCase):

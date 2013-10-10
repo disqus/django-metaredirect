@@ -1,8 +1,19 @@
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.utils.encoding import iri_to_uri
 
 from metaredirect.helpers import is_interactive_user_agent
+
+
+def templated_redirect_response(url):
+    response = render_to_response('metaredirect/redirect.txt', {
+        'url': url,
+    })
+    try:
+        response['X-Location'] = url.encode('ascii')
+    except UnicodeEncodeError:
+        response['X-Location'] = iri_to_uri(url)
+    return response
 
 
 def redirect_to(request, url, permanent=False):
@@ -23,11 +34,7 @@ def redirect_to(request, url, permanent=False):
     :rtype: :class:`django.http.HttpResponse` or derived class
     """
     if is_interactive_user_agent(request):
-        context = RequestContext(request, {'url': url})
-        response = render_to_response('metaredirect/redirect.txt',
-            context_instance=context)
-        response['X-Location'] = url
-        return response
+        return templated_redirect_response(url)
     else:
         if permanent:
             response_cls = HttpResponsePermanentRedirect
