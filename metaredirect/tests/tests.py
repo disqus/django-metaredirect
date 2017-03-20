@@ -67,7 +67,7 @@ class RedirectToViewTestCase(TestCase):
         self.assertContains(response, meta_redirect)
 
         javascript_redirect = \
-            '<script>location.replace("http:\/\/example.com")</script>'
+            '<script>window.opener=null;location.replace("http:\/\/example.com")</script>'
         self.assertContains(response, javascript_redirect)
 
     @using_interactive_user_agent(False)
@@ -89,7 +89,7 @@ class RedirectToViewTestCase(TestCase):
             'content="0;URL=http://example.com/&quot;)&lt;/script&gt;">'
         self.assertContains(response, meta_redirect)
 
-        javascript_redirect = r'<script>location.replace' \
+        javascript_redirect = r'<script>window.opener=null;location.replace' \
             '("http:\/\/example.com\/\u0022)\u003C\/script\u003E")</script>'
         self.assertContains(response, javascript_redirect)
 

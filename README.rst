@@ -1,7 +1,3 @@
-NOTICE: Deprecated
-==================
-This project is deprecated and no longer actively maintained by Disqus.
-
 django-metaredirect
 ===================
 

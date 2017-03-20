@@ -22,8 +22,8 @@ tests_require = ['mock']
 setup(name='django-metaredirect',
     version=version,
     url='http://github.com/disqus/django-metaredirect/',
-    author='ted kaemming',
-    author_email='ted@disqus.com',
+    author='Disqus',
+    author_email='opensource@disqus.com',
     description='META-tag and JavaScript based generic redirect views for '
         'maintaining HTTP referrers.',
     packages=find_packages(),

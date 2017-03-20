@@ -1,0 +1,12 @@
+language: python
+python:
+- '2.7'
+install: pip install tox-travis
+script: tox
+deploy:
+  provider: pypi
+  user: disqus
+  password:
+    secure: MQqk8QWYejcTuJFEweswRaUMXZHV0rZu2ekZBa3t6sa0iILGj7vIBVV+3nXKQNfAt/lLBiFZFxueZAy1ulyf1qRLCFA9+8Z3NG05fQapZYJKDU3Qg9vPYVIld++izzRpVNOSEsYTQZGWw3bzCrwgYca7YT+0PlK/PmTh7/8/V+s=
+  on:
+    tags: true
